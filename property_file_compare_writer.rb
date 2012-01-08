@@ -37,6 +37,14 @@ module PropertyFileCompareWriter
     end
   end
 
+  #Output to CSV file
+  #File format is as follows
+  #Language=l
+  #Header
+  #Category=c1
+  #Properties
+  #Category=c2
+  #Properties
   def PropertyFileCompareWriter.output_csv_comparison_files(property_files, output_dir)
     csv_dir = output_dir + '/csv/'
     if !File.directory?(csv_dir)
@@ -45,6 +53,7 @@ module PropertyFileCompareWriter
     header = "Property,English Text,Translated Text"
     property_files.get_properties_organized_by_language.each do |k, v|
       File.open(csv_dir + k + "_translation_errors.csv", 'w') do |f|  
+        f.puts("Language=#{k}")
         f.puts(header)	
         v.each do |property_file|
           if !property_file.errors.nil?
