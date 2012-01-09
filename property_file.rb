@@ -74,7 +74,7 @@ class PropertyFile
   
   #Overwrite the current file with the given set of properties
   def save(properties)
-    File.open(@filename, 'w') do |f| 
+    File.open(@filename, "w:UTF-8") do |f| 
       properties.each do |k,v|
         f.puts("#{k}=#{v}")
       end
@@ -115,7 +115,7 @@ class PropertyFile
   def get_properties
     #Assumes PropertyName=PropertyString with or without whitespace around =
     properties = Hash.new
-    File.open(@filename, 'r').each_line do |s| 
+    File.open(@filename, "r:UTF-8").each_line do |s| 
       m = PropertyFileAttributes::PROPERTY_FILE_REGEX.match(s)
       if m != nil
         property = m[1]

@@ -21,6 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++require_relative 'property_files'
 
+require_relative 'property_files'
 require_relative 'property_file_comparator'
 require_relative 'property_file_compare_writer'
 

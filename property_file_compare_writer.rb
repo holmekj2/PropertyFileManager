@@ -46,9 +46,12 @@ module PropertyFileCompareWriter
     if !File.directory?(output_dir)
       Dir.mkdir(output_dir)
     end
+    if output_dir[-1] != '/'
+      output_dir = output_dir + '/' 
+    end
 
     property_files.get_properties_organized_by_language.each do |k, v|
-      File.open(output_dir + "/" + k + "_translation_errors.txt", 'w') do |f|  
+      File.open(output_dir + k + "_translation_errors.txt", "w:UTF-8") do |f|  
         v.each do |property_file|
           #If the PropertyFile instance has errors write them to the file and write each error to the file
           if !property_file.errors.nil?
@@ -77,8 +80,12 @@ module PropertyFileCompareWriter
     if !File.directory?(csv_dir)
       Dir.mkdir(csv_dir)
     end
+    if csv_dir[-1] != '/'
+      csv_dir = csv_dir + '/' 
+    end
+    
     property_files.get_properties_organized_by_language.each do |k, v|
-      File.open(csv_dir + k + "_translation_errors.csv", 'w') do |f|  
+      File.open(csv_dir + k + "_translation_errors.csv", "w:UTF-8") do |f|  
         f.puts(CSV_LANGUAGE_HEADER + k)
         f.puts(CSV_COLUMN_HEADER)
         #v is an array of PropertyFiles based on language         
@@ -100,7 +107,7 @@ module PropertyFileCompareWriter
   #return language (string PropertyFileAttributes::Languages), property_sets (array of PropertySets, an entry for each category)
   def PropertyFileCompareWriter.read_csv_translation_files(filename)
     s = nil
-    File.open(filename, 'r') do |f|  
+    File.open(filename, "r:UTF-8") do |f|  
       s = f.read
     end
     s = PropertyFileAttributes.remove_break_space(s)
