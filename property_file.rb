@@ -1,3 +1,26 @@
+#--
+# Copyright (c) Kevin Holmes
+#
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to
+# the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#++require_relative 'property_files'
+
 require_relative 'property_file_attributes'
 
 class PropertySet
@@ -86,7 +109,9 @@ class PropertyFile
     end
   end  
   
-  #Parses a property file and returns a hash of properties with key as Property name and the value as the string for that property
+  #Parses a property file and returns a hash of properties with key as Property name and the value as the string for that property.
+  #Properties are not member variables to try and minimize memory usage. Therefore be careful to not call this method over and over, 
+  #rather keep the return in scope. 
   def get_properties
     #Assumes PropertyName=PropertyString with or without whitespace around =
     properties = Hash.new
@@ -95,9 +120,9 @@ class PropertyFile
       if m != nil
         property = m[1]
         #This is a hack to get rid of the unicode non-break space that sometimes find their way into international files
-        property = remove_break_space(property).strip()        
+        property = PropertyFileAttributes.remove_break_space(property).strip()        
         value = m[2]
-        value = remove_break_space(value).strip()
+        value = PropertyFileAttributes.remove_break_space(value).strip()
         properties[property] = value
       end
     end 
@@ -110,10 +135,5 @@ class PropertyFile
     @errors = errors
   end
 
-  private
-  #Convert the break space that is used in some languages to a regular space
-  def remove_break_space(s)
-    s.gsub("\u00A0", " ")          
-  end
 end
 

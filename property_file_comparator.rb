@@ -1,7 +1,33 @@
+#--
+# Copyright (c) Kevin Holmes
+#
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to
+# the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#++require_relative 'property_files'
+
 require_relative 'property_ignore'
 
 class PropertyFileComparator
   ERRORS = {:EMPTY => "empty", :MISSING => "missing", :NOT_TRANSLATED => "not translated", :UNKNOWN_PROPERTY => "unknown property"}
+  
+  #Compare a property files for a given category
+  #property_file_category (PropertyFileCategory instance)
   def compare_category(property_file_category)
     nominal_properties = property_file_category.nominal.get_properties
     property_file_category.translations.each do |t|
@@ -9,10 +35,12 @@ class PropertyFileComparator
       t.set_errors(translation_errors)
     end
   end
-  
+
+  #Compare all property files
+  #property_file_categories (array of PropertyFileCategory instances)
   def compare_all(property_file_categories)
-    property_file_categories.each do |k,v|
-      compare_category(v)
+    property_file_categories.each do |p|
+      compare_category(p)
     end
   end
   
@@ -48,8 +76,10 @@ class PropertyFileComparator
     errors
   end
   
+  private
+  #Returns false if we should not try to translate this property
   def check_for_valid_comparison(property, value)
-    #If the property is a hyperlink or just a number then skip the comparison
+    #We want to ignore certain things for translation as defined here.
     status = !(check_for_hyperlink(value) or check_for_number(value) or check_for_hex(value) or check_for_embed(value) or check_for_ignore(property))
   end
   

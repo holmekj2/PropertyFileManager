@@ -1,35 +1,65 @@
+#--
+# Copyright (c) Kevin Holmes
+#
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to
+# the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#++require_relative 'property_files'
+
 require_relative 'property_file'
 
+#Class to sort PropertyFile instances based on PropertyFileAttributes::PROPERTY_FILE_CATEGORY
 class PropertyFileCategory
   attr_reader :nominal, :translations
+  #category (PropertyFileAttributes::PROPERTY_FILE_CATEGORY)
   def initialize(category)
     @category = category
     @nominal = nil
     @translations = []
   end
   
+  #Set the nominal language; the language to be used for comparison against translations (i.e. US) 
+  #nominal is an instance of PropertyFile
   def set_nominal(nominal)
     @nominal = nominal
   end
   
+  #Add a PropertyFile instance of a translation file
   def add_translation(translation)
     @translations.push(translation)
   end
 end
 
+#Property file manager
 class PropertyFiles
-  #property_files_by_category
-  #Keys are category name, values are instances of PropertyFileCategory
-  #property_filenames
-  #Array of filenames of all property files
+  #property_files_by_category (hash of categories, key=PropertyFileAttributes::PROPERTY_FILE_CATEGORY, values are all instances of PropertyFileCategory for each detected category)
+  #property_filenames (array of strings of all located property filenames)
   attr_reader :property_files_by_category, :property_filenames  
+  #Initialize the manager. base_directory indicates the directory to start the recursive search for property files
   def initialize(base_directory)
     @property_files = nil
     scan_fs_for_property_files(base_directory)    
     organize_by_category
   end
   
-  #Get a property file by category and language
+  #Get a PropertyFile instance by category and language
+  #category PropertyFileAttributes::PROPERTY_FILE_CATEGORY
+  #language PropertyFileAttributes::LANGUAGE
   def get_property_file(category, language)
     property_file = nil
     @property_files.each do |p|
@@ -41,6 +71,8 @@ class PropertyFiles
     property_file
   end
   
+  #Get an array of PropertyFile instances for all files associated with given language
+  #language PropertyFileAttributes::LANGUAGE  
   def get_properties(language)
     property_files = []
     @property_files.each do |p|
@@ -52,8 +84,8 @@ class PropertyFiles
     property_files
   end
 
-  #Returns a hash of property files keyed by languages.
-  #Hash keys are language (e.g. CN), values are arrays of PropertyFile instances for that language
+  #Returns a hash of all PropertyFile instances keyed by languages.
+  #Hash keys are PropertyFileAttributes::LANGUAGE, values are arrays of PropertyFile instances for that language
   def get_properties_organized_by_language
     #Create a hash
     property_files = {}
@@ -70,7 +102,8 @@ class PropertyFiles
     property_files
   end
   
-  #Create a hash of all categories. Keys are category name, values are instances of PropertyFileCategory.
+  #Returns a hash of all PropertyFile instances by category.
+  #Create a hash of all categories. Keys are PropertyFileAttributes::PROPERTY_FILE_CATEGORY, values are instances of PropertyFileCategory.
   def organize_by_category
     @property_files_by_category = Hash.new
     @property_files.each do |p|    
@@ -87,7 +120,9 @@ class PropertyFiles
     end
   end
   
-  #Does recursive search started at base_directory and creates array of PropertyFile instances
+  private
+  #Does recursive file search started at base_directory and creates array of PropertyFile instances
+  #filename scanning is defined in PropertyFileAttributes
   def scan_fs_for_property_files(base_directory)
     property_file_search_pattern = File.join("#{base_directory}/**", PropertyFileAttributes::PROPERTY_FILE_PATTERN)  
     @property_filenames = Dir.glob(property_file_search_pattern)
