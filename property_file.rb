@@ -112,6 +112,7 @@ class PropertyFile
     s.gsub("\u00A0", " ")          
   end
   
+  #errors is a hash key=property, value is array [error status(PropertyFileComparator::ERRORS), text to be translated] 
   def set_errors(errors)
     @errors = errors
   end

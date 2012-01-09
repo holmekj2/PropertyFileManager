@@ -1,11 +1,7 @@
 require_relative 'property_ignore'
 
-EMPTY = "empty"
-MISSING = "missing"
-NOT_TRANSLATED = "not translated"
-UNKNOWN_PROPERTY = "unknown property"
-
 class PropertyFileComparator
+  ERRORS = {:EMPTY => "empty", :MISSING => "missing", :NOT_TRANSLATED => "not translated", :UNKNOWN_PROPERTY => "unknown property"}
   def compare_category(property_file_category)
     nominal_properties = property_file_category.nominal.get_properties
     property_file_category.translations.each do |t|
@@ -23,8 +19,7 @@ class PropertyFileComparator
   
   #Compares a property set against a nominal set
   #nominal is the english properties, translation is the foreign language set to translation
-  #returns a hash of properties that look to be not translated. 
-  #The return hash can have a value of "empty" (not set), "missing" (no property exists), "not translated", or "unknown property" (for a property that exists in translation but not in nominal)
+  #return is a hash key=property, value is array [error status(PropertyFileComparator::ERRORS), text to be translated]
   def compare_against_nominal(nominal, translation)
     errors = Hash.new
     nominal.each do |k, v|
@@ -32,11 +27,11 @@ class PropertyFileComparator
     if check_for_valid_comparison(k, v)
       #Test for missing keys, empty strings, and untranslated strings
         if !translation.has_key?(k)
-        status = MISSING
+        status = ERRORS[:MISSING]
       elsif translation[k] == nil or translation[k] == "" or translation[k] == '""'
-        status = EMPTY
+        status = ERRORS[:EMPTY]
       elsif translation[k] == v
-        status = NOT_TRANSLATED
+        status = ERRORS[:NOT_TRANSLATED]
       end
       #If we have errors put them in our error hash
       if status != nil
@@ -49,7 +44,7 @@ class PropertyFileComparator
 
     #Now log errors for extra properties in the translation set
     translation.each do |k, v|
-      errors[k] = [UNKNOWN_PROPERTY, v]
+      errors[k] = [ERRORS[:UNKNOWN_PROPERTY], v]
     end
     errors
   end
