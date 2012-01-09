@@ -11,13 +11,17 @@ end
 base_dir = ARGV[0]
 patch_file = ARGV[1]
 
+#Read the input patch file. We'll get the language and a set of instances for all the property sets (one for each category in the patch file)
 language, property_sets = PropertyFileCompareWriter.read_csv_translation_files(patch_file)
 if property_sets.empty?
   puts "No property founds in #{patch_file}"
   exit
 end
 
+#Create the property files manage
 property_files = PropertyFiles.new(base_dir)
+
+#For each of the property sets (i.e. category sets), apply the translations in the patch file to the real property files
 property_sets.each do |ps|
   if !ps.properties.empty?
     property_file = property_files.get_property_file(ps.category, ps.language)
