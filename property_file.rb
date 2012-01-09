@@ -97,16 +97,19 @@ class PropertyFile
       if m != nil
         property = m[1]
         #This is a hack to get rid of the unicode non-break space that sometimes find their way into international files
-        property.gsub!("\u00A0", "")        
-        property.strip!
+        property = remove_break_space(property).strip()        
         value = m[2]
-        value.gsub!("\u00A0", "")    
-        value.strip!
+        value = remove_break_space(value).strip()
         properties[property] = value
       end
     end 
     @number_properties = properties.size
     properties
+  end
+
+  #Convert the break space that is used in some languages to a regular space
+  def remove_break_space(s)
+    s.gsub("\u00A0", " ")          
   end
   
   def set_errors(errors)
