@@ -2,17 +2,14 @@ require 'csv'
 require_relative 'property_file'
 
 module PropertyFileCompareWriter
+  CSV_COLUMN_HEADER = 'Property,English Text,Translated Text'
+  CSV_LANGUAGE_HEADER = 'Language='
+  CSV_CATEGORY_HEADER = 'Category='  
   def PropertyFileCompareWriter.output_category_comparison(property_files)
     property_files.property_files_by_category.each_value do |pc|
       pc.translations.each do |t|
         if !t.errors.nil?
         status = "#{t.filename} has #{t.errors.size} translation errors out of #{t.number_properties} properties"
-        #puts status
-        #puts "\n\n#{status}"
-        #overall_status.push(status)
-          #t.errors.each do |k, v|
-        #  puts "#{k}(#{v[0]}): #{v[1]}"
-        #end
         end
       end
     end
@@ -53,11 +50,10 @@ module PropertyFileCompareWriter
     if !File.directory?(csv_dir)
       Dir.mkdir(csv_dir)
     end
-    header = 'Property,English Text,Translated Text'
     property_files.get_properties_organized_by_language.each do |k, v|
       File.open(csv_dir + k + "_translation_errors.csv", 'w') do |f|  
-        f.puts("Language=#{k}")
-        f.puts(header)  
+        f.puts(CSV_LANGUAGE_HEADER + k)
+        f.puts(CSV_COLUMN_HEADER)  
         v.each do |property_file|
           if !property_file.errors.nil?
             f.puts("Category=#{property_file.category}")
@@ -76,13 +72,13 @@ module PropertyFileCompareWriter
     File.open(filename, 'r') do |f|  
       s = f.read
     end
-    split_by_category = s.split("Category=")
+    split_by_category = s.split(CSV_CATEGORY_HEADER)
     #Remove the header
     header = split_by_category.shift
 
     #Language
     language = nil  
-    regex = /Language=(.*)/
+    regex = Regexp.new(CSV_LANGUAGE_HEADER + '(.*)')
     m = regex.match(header)
     if m != nil
       language = m[1]

@@ -5,16 +5,15 @@ class PropertyFileComparator
   def compare_category(property_file_category)
     nominal_properties = property_file_category.nominal.get_properties
     property_file_category.translations.each do |t|
-    translation_errors = compare_against_nominal(nominal_properties, t.get_properties)
-    t.set_errors(translation_errors)
-    #puts "Checking #{t.filename}" 
-  end
+      translation_errors = compare_against_nominal(nominal_properties, t.get_properties)
+      t.set_errors(translation_errors)
+    end
   end
   
   def compare_all(property_file_categories)
     property_file_categories.each do |k,v|
-    compare_category(v)
-  end
+      compare_category(v)
+    end
   end
   
   #Compares a property set against a nominal set
@@ -24,20 +23,20 @@ class PropertyFileComparator
     errors = Hash.new
     nominal.each do |k, v|
       status = nil    
-    if check_for_valid_comparison(k, v)
-      #Test for missing keys, empty strings, and untranslated strings
+      if check_for_valid_comparison(k, v)
+        #Test for missing keys, empty strings, and untranslated strings
         if !translation.has_key?(k)
-        status = ERRORS[:MISSING]
-      elsif translation[k] == nil or translation[k] == "" or translation[k] == '""'
-        status = ERRORS[:EMPTY]
-      elsif translation[k] == v
-        status = ERRORS[:NOT_TRANSLATED]
+          status = ERRORS[:MISSING]
+        elsif translation[k] == nil or translation[k] == "" or translation[k] == '""'
+          status = ERRORS[:EMPTY]
+        elsif translation[k] == v
+          status = ERRORS[:NOT_TRANSLATED]
+        end
+        #If we have errors put them in our error hash
+        if status != nil
+          errors[k] = [status, v]
+        end
       end
-      #If we have errors put them in our error hash
-      if status != nil
-        errors[k] = [status, v]
-      end
-    end
       #Now remove this entry from the translation group 
       translation.delete(k)
     end
@@ -56,25 +55,26 @@ class PropertyFileComparator
   
   def check_for_hyperlink(s)
     #hyperlink ends in htm or html
-  index = s =~ /\.html?$/
-  return index != nil
+    index = s =~ /\.html?$/
+    return index != nil
   end
   
   #Returns true if s is a number
   def check_for_number(s)
     #check for number. real numbers either have . or , separators
-  index = s =~ /[^-\d\.,]/ 
-  return index == nil
+    index = s =~ /[^-\d\.,]/ 
+    return index == nil
   end
   
   def check_for_hex(s)
     index = s =~ /[^\dABCDEFabcdefxX#]/
-  return index == nil
+    return index == nil
   end
   def check_for_embed(s)
     index = s =~ /^Embed/
-  return index != nil
+    return index != nil
   end
+  
   def check_for_ignore(property)
     PROPERTIES_TO_IGNORE.include?(property)
   end

@@ -1,0 +1,3 @@
+ruby property_file_checker.rb "C:/Users/hol48987/Documents/home/hol48987_D6KWQM1/PathTrak/SystemSoftware/WebView/WebView3.0/" 
+ruby property_file_patcher.rb "C:/Users/hol48987/Documents/home/hol48987_D6KWQM1/PathTrak/SystemSoftware/WebView/WebView3.0/" "C:\Users\hol48987\Documents\workspace\ruby\PropertyFileStatus\compare\csv\BR_translation_errors.csv"
+ruby property_file_checker.rb "C:/Users/hol48987/Documents/home/hol48987_D6KWQM1/PathTrak/SystemSoftware/WebView/WebView3.0/" 
