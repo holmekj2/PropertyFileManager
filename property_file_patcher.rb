@@ -9,18 +9,13 @@ if ARGV.size != 2
 end
 
 base_dir = ARGV[0]
-
 patch_file = ARGV[1]
 
-property_sets = PropertyFileCompareWriter.read_csv_translation_files(patch_file)
+language, property_sets = PropertyFileCompareWriter.read_csv_translation_files(patch_file)
 if property_sets.empty?
   puts "No property founds in #{patch_file}"
   exit
 end
-
-#grab language from file
-language = property_sets[0].language
-language.gsub!(",","")
 
 property_files = PropertyFiles.new(base_dir)
 property_sets.each do |ps|
@@ -29,7 +24,7 @@ property_sets.each do |ps|
     if !property_file.nil?
       number_patches = property_file.patch(ps)
       if number_patches > 0 
-        puts "Patched #{number_patches} properties in #{property_file}"
+        puts "Patched #{number_patches} properties in #{property_file.filename}"
       end
     else
       puts "Unknown language or category: #{ps.category}, #{ps.language}"

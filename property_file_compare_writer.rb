@@ -86,6 +86,8 @@ module PropertyFileCompareWriter
     m = regex.match(header)
     if m != nil
       language = m[1]
+      #Remove any commas if there are any
+      language = language.gsub(",","").strip
     else
       puts "Language not found: #{filename}"
       raise EOFError
@@ -105,7 +107,7 @@ module PropertyFileCompareWriter
       end
       property_sets.push(property_set)
     end
-    property_sets
+    return language, property_sets
   end
   
 end
