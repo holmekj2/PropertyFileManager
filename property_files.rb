@@ -89,7 +89,7 @@ class PropertyFiles
   def get_properties_organized_by_language
     #Create a hash
     property_files = {}
-    PropertyFileAttributes::LANGUAGES.each do |l|
+    PropertyFileAttributes::LOCALES.each do |l|
       property_files[l] = []
     end
     @property_files.each do |p|
@@ -112,7 +112,7 @@ class PropertyFiles
         @property_files_by_category[p.category] = PropertyFileCategory.new(p.category)
       end
       #Add the property file to the category based on whether it is in English (nominal) or a translation
-      if p.language == PropertyFileAttributes::LANGUAGES[0]
+      if p.language == PropertyFileAttributes::LOCALES[0]
         @property_files_by_category[p.category].set_nominal(p)
       else
         @property_files_by_category[p.category].add_translation(p)    

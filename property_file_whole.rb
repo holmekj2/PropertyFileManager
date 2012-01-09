@@ -3,7 +3,7 @@ MISSING = "missing"
 NOT_TRANSLATED = "not translated"
 UNKNOWN_PROPERTY = "unknown property"
 PROPERTY_FILE_CATEGORIES = ["ActernaDCS", "QamPerformanceClient", "QAMTrakFlashClient", "SAFlashClient"]
-LANGUAGES = ["US", "DE", "ES", "JP", "BR", "CN"]
+LOCALES = ["US", "DE", "ES", "JP", "BR", "CN"]
 
 
 nominal = parse_property_file("nominal.txt")
@@ -52,7 +52,7 @@ class PropertyFiles
 	    @property_files_by_category[p.category] = PropertyFileCategory.new(p.category)
 	  end
 	  #Add the property file to the category based on whether it is in English (nominal) or a translation
-	  if p.language == LANGUAGES[0]
+	  if p.language == LOCALES[0]
 	    @property_files_by_category[p.category].set_nominal(p)
 	  else
 	    @property_files_by_category[p.category].add_translation(p)	  
@@ -170,14 +170,14 @@ class PropertyFile
   #Finds the language of property file based on file naming scheme. Throws exception if the language is unknown or not found  
   def find_language
     #Find the language based on the path
-    LANGUAGES.each do |l|
+    LOCALES.each do |l|
 	  if @filename.index(l)
 	    @language = l
 	  end
     end
 	#If the language is not indicated assume it is English
     if @language == nil
-	  @language = LANGUAGES[0] #"US"
+	  @language = LOCALES[0] #"US"
     end
   end  
   #Parses a property file and returns a hash of properties with key as Property name and the value as the string for that property

@@ -98,14 +98,14 @@ class PropertyFile
   #Finds the language of property file based on file naming scheme. Throws exception if the language is unknown or not found  
   def find_language
     #Find the language based on the path
-    PropertyFileAttributes::LANGUAGES.each do |l|
+    PropertyFileAttributes::LOCALES.each do |l|
       if @filename.index(l)
         @language = l
       end
     end
     #If the language is not indicated assume it is English
     if @language == nil
-      @language = LANGUAGES[0] #"US"
+      @language = LOCALES[0] #"US"
     end
   end  
   

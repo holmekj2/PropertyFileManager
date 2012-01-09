@@ -25,7 +25,7 @@ module PropertyFileAttributes
   #Categories represent the different property files. These categories strings are expected to be contained in the filepath.
   PROPERTY_FILE_CATEGORIES = ["ActernaDCS", "QamPerformanceClient", "QAMTrakFlashClient", "SAFlashClient"]
   #Different languages for translations. These language strings are expected to be contained in the filepath.
-  LANGUAGES = ["US", "DE", "ES", "JP", "BR", "CN"]
+  LOCALES = ["en_US", "de_DE", "es_ES", "ja_JP", "pt_BR", "zh_CN"]
   #Pattern for the property file search
   PROPERTY_FILE_PATTERN = "App*Resource*.properties"
   #Regex to parse the property files into properties and value (property=value with or without whitespace around =)
