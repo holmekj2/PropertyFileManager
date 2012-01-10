@@ -75,9 +75,9 @@ class PropertyFile
         property = k
         text = v
         #Since our patches should be in UTF-8, convert strings to latin1 for any latin1 files.
-        if PropertyFileAttributes::CATEGORY_ENCODINGS[@category] == "ISO-8859-1"
-          property = property.encode("ISO-8859-1")
-          text = text.encode("ISO-8859-1")
+        if PropertyFileAttributes::CATEGORY_ENCODINGS[@category] != "UTF-8"
+          property = property.encode(PropertyFileAttributes::CATEGORY_ENCODINGS[@category])
+          text = text.encode(PropertyFileAttributes::CATEGORY_ENCODINGS[@category])
         end
         f.puts("#{property}=#{text}")
       end
