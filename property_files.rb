@@ -27,7 +27,7 @@ require_relative 'property_file_attributes'
 
 #Class to sort PropertyFile instances based on PropertyFileAttributes::PROPERTY_FILE_CATEGORY
 class PropertyFileCategory
-  attr_reader :nominal, :translations
+  attr_reader :nominal, :translations, :category
   #category (PropertyFileAttributes::PROPERTY_FILE_CATEGORY)
   def initialize(category)
     @category = category

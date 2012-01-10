@@ -1,4 +1,5 @@
-PROPERTIES_TO_IGNORE = [
+PROPERTIES_TO_IGNORE = {
+"ActernaDCS" => [
 "about.license.title.hcu.hcu1500",
 "about.license.title.hcu.hcu4200",
 "about.license.title.hcu.hcu400",
@@ -21,6 +22,7 @@ PROPERTIES_TO_IGNORE = [
 "admin.label._32QAM",
 "admin.label._16QAM",
 "admin.label._QPSK",
+"admin.label.QPSK",
 
 "error.input.badchars",
 "help.AdminSystemMenu",
@@ -30,5 +32,69 @@ PROPERTIES_TO_IGNORE = [
 "label.QPSK(",
 "label.16QAM",
 "label.32QAM",
-"label.64QAM"
+"label.64QAM",
+
+"unit.db_mhz",
+"unit.nanoseconds",
+"unit.nanoseconds_mhz",
+"unit.mhz",
+"unit.msps",
+"report.axisLabel.dbuv",
+"ucdscan.table.header.hcu"
+],
+
+"QamPerformanceClient" => [
+"label.MER",
+"label.MER_",
+"label.MAC_",
+"label.HCU_",
+"label.QPSK",
+"label.MER__dB_",
+"menuitem.MER",
+"menuitem.2_dB_div",
+"menuitem.5_dB_div",
+"menuitem.10_dB_div",
+"unit.dbm",
+"unit.dbuv",
+"unit.dbmv",
+"unit.percent",
+"unit.mhz",
+"unit.khz",
+"unit.nanoseconds"
+],
+
+"QAMTrakFlashClient" => [
+"label.MER",
+"label.MER_",
+"label.MAC_",
+"label.HCU_",
+"label.QPSK",
+"label.MER__dB_",
+"label.DOCSIS",
+"menuitem.MER",
+"menuitem.2_dB_div",
+"menuitem.5_dB_div",
+"menuitem.10_dB_div",
+"iq.export.MAC",
+"unit.dbm",
+"unit.dbuv",
+"unit.dbmv",
+"unit.percent",
+"unit.mhz",
+"unit.khz",
+"unit.nanoseconds",
+"unit.nanoseconds_per_mhz"
+],
+
+"SAFlashClient" => [
+"label.HCU_",
+"label.DOCSIS",
+"unit.dbm",
+"unit.dbuv",
+"unit.dbmv",
+"unit.percent",
+"unit.mhz",
+"unit.khz",
+"unit.nanoseconds"
 ]
+}

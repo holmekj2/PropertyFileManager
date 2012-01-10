@@ -26,6 +26,9 @@ require_relative 'property_ignore'
 class PropertyFileComparator
   ERRORS = {:EMPTY => "empty", :MISSING => "missing", :NOT_TRANSLATED => "not translated", :UNKNOWN_PROPERTY => "unknown property"}
   
+  def initialize
+    initialize_ignore
+  end
   #Compare a property files for a given category
   #property_file_category (PropertyFileCategory instance)
   def compare_category(property_file_category)
@@ -44,8 +47,28 @@ class PropertyFileComparator
     end
   end
   
+  #Find translation errors common to all translations. This gives us an idea of what to add to ignore file. 
+  def find_all_common_errors(property_file_categories)    
+    property_file_categories.each do |p|
+      error_intersection = nil
+      compare_category(p)      
+      p.translations.each do |t|
+        if error_intersection.nil? 
+          error_intersection = t.errors.keys
+        else
+          error_intersection &= t.errors.keys
+        end
+      end
+      puts "Error intersection for category #{p.category}"
+      nominal_properties = p.nominal.get_properties
+      error_intersection.each do |e|
+        puts "property=#{e} text=#{nominal_properties[e]}"
+      end
+    end     
+  end
+  
   #Compares a property set against a nominal set
-  #nominal is the english properties, translation is the foreign language set to translation
+  #nominal are the english properties, translation is the foreign language set to translation
   #return is a hash key=property, value is array [error status(PropertyFileComparator::ERRORS), text to be translated]
   def compare_against_nominal(nominal, translation)
     errors = Hash.new
@@ -106,7 +129,12 @@ class PropertyFileComparator
   end
   
   def check_for_ignore(property)
-    PROPERTIES_TO_IGNORE.include?(property)
+    @properties_to_ignore.include?(property)
+  end
+  
+  def initialize_ignore
+    #Grab all properties from ignore file. For now don't separate by category. 
+    @properties_to_ignore = PROPERTIES_TO_IGNORE.values.flatten.uniq
   end
 end
 
