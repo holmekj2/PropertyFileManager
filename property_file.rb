@@ -59,13 +59,9 @@ class PropertyFile
     number_patches_applied = 0
     properties = get_properties
     patch_property_set.properties.each do |patch_properties_key, patch_properties_value|
-      if properties.has_key?(patch_properties_key)
-        if patch_properties_value != properties[patch_properties_key] 
-          properties[patch_properties_key] = patch_properties_value
-          number_patches_applied += 1
-        end
-      else
-        puts "Unknown property from patch #{patch_properties_key} in #{@filename}"
+      if patch_properties_value != properties[patch_properties_key] 
+        properties[patch_properties_key] = patch_properties_value
+        number_patches_applied += 1
       end
     end
     save(properties)
@@ -112,7 +108,7 @@ class PropertyFile
     end
     #If the language is not indicated assume it is English
     if @language == nil
-      @language = LOCALES[0] #"US"
+      @language = PropertyFileAttributes::LOCALES[0] #"Default"
     end
   end  
   
