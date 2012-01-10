@@ -22,6 +22,7 @@
 #++require_relative 'property_files'
 
 require 'csv'
+require 'spreadsheet'
 require_relative 'property_file'
 require_relative 'property_file_comparator'
 
@@ -29,6 +30,9 @@ module PropertyFileCompareWriter
   CSV_COLUMN_HEADER = 'Property,English Text,Translated Text'
   CSV_LANGUAGE_HEADER = 'Language='
   CSV_CATEGORY_HEADER = 'Category='  
+  EXCEL_COLUMN_HEADER = ['Property', 'English Text' , 'Translated Text']
+  EXCEL_LANGUAGE_HEADER = 'Language='
+  EXCEL_CATEGORY_HEADER = 'Category='  
   
   #Outputs number of translation errors for each property file
   def PropertyFileCompareWriter.output_category_comparison(property_files)
@@ -109,6 +113,45 @@ module PropertyFileCompareWriter
       end
     end
   end
+
+  def PropertyFileCompareWriter.output_excel_translation_files(property_files, excel_dir)
+    if !File.directory?(excel_dir)
+      Dir.mkdir(excel_dir)
+    end
+    if excel_dir[-1] != '/'
+      excel_dir = excel_dir + '/' 
+    end
+    Spreadsheet.client_encoding = 'UTF-8'    
+    property_files.get_properties_organized_by_language.each do |k, v|
+      book = Spreadsheet::Workbook.new
+      sheet1 = book.create_worksheet
+      sheet1.insert_row(sheet1.row_count)
+      last_row = sheet1.last_row 
+      last_row.push(EXCEL_LANGUAGE_HEADER + k)
+      sheet1.insert_row(sheet1.row_count)
+      last_row = sheet1.last_row 
+      last_row.concat(EXCEL_COLUMN_HEADER)
+
+      #v is an array of PropertyFiles based on language         
+      v.each do |property_file|
+        if !property_file.errors.nil?
+          sheet1.insert_row(sheet1.row_count)
+          last_row = sheet1.last_row 
+          last_row.push("Category=#{property_file.category}")
+          #Write errors (missing translations) to the csv file
+          property_file.errors.each do |kk,vv|
+            #Don't include unknown properties since we don't want these translated              
+            if vv[0] != PropertyFileComparator::ERRORS[:UNKNOWN_PROPERTY]
+              sheet1.insert_row(sheet1.row_count)
+              last_row = sheet1.last_row 
+              last_row.concat([kk, vv[1]])
+            end
+          end
+        end
+      end
+      book.write(excel_dir + k + "_translation_errors.xls")
+    end
+  end
   
   #Reads a given csv translation file (as output by PropertyFileCompareWriter.output_csv_translation_files). The translated text is read and populated into an 
   #an array of PropertySets which is returned along with the language string
@@ -155,5 +198,58 @@ module PropertyFileCompareWriter
     end
     return language, property_sets
   end
-  
+
+  #Reads a given excel translation file (as output by PropertyFileCompareWriter.output_csv_translation_files). The translated text is read and populated into an 
+  #an array of PropertySets which is returned along with the language string
+  #return language (string PropertyFileAttributes::Languages), property_sets (array of PropertySets, an entry for each category)
+  def PropertyFileCompareWriter.read_excel_translation_files(filename)
+    s = nil
+    book = Spreadsheet.open(filename)
+    sheet1 = book.worksheet(0)
+    languague_re = Regexp.new(EXCEL_LANGUAGE_HEADER + '\s?(.*)')
+    category_re = Regexp.new(EXCEL_CATEGORY_HEADER + '\s?(.*)')
+    header_re = Regexp.new(EXCEL_COLUMN_HEADER[0])
+    #Do a regex match to find properties ensuring the x.y format
+    property_re = Regexp.new('.*\..*')    
+    language = nil
+    category = nil
+    property_sets = []
+    property_set = nil
+    #Find language which should be the first thing in the sheet
+    sheet1.each do |row|
+      col0 = PropertyFileAttributes.remove_break_space(row[0])
+      #Cheack for property      
+      if (m = property_re.match(col0))
+        #Verify a translation exists before setting it to the property set
+        if row.size >= 3 and !row[2].nil? and row[2] != "" and row[2] != row[1]
+          property = col0
+          translation = PropertyFileAttributes.remove_break_space(row[2])
+          property_set.set_property(property, translation)
+        end
+      #Check for language
+      elsif (m = languague_re.match(col0))
+        language = m[1]
+        if !PropertyFileAttributes::LOCALES.include?(language)
+          raise ArgumentError, "Unknown language: #{language}" 
+        end
+      #Check for category
+      elsif (m = category_re.match(col0))
+        category = m[1]
+        if !PropertyFileAttributes::PROPERTY_FILE_CATEGORIES.include?(category)
+          raise ArgumentError, "Unknown category: #{category}" 
+        end
+        #When we find a category, first save off the previous PropertySet if it exists and then create a new PropertySet
+        if !property_set.nil?
+          property_sets.push(property_set)          
+        end
+        property_set = PropertySet.new(category, language)
+      end
+    end
+    #We need to save off the last property set before we exit since category is the trigger for other ones. 
+    if !property_set.nil?
+      property_sets.push(property_set)          
+    end
+    
+    return language, property_sets
+  end
 end

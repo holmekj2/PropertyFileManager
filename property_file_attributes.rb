@@ -26,6 +26,8 @@ module PropertyFileAttributes
   PROPERTY_FILE_CATEGORIES = ["ActernaDCS", "QamPerformanceClient", "QAMTrakFlashClient", "SAFlashClient"]
   #Encoding types for the various property file categories
   CATEGORY_ENCODINGS = {"ActernaDCS" => "ISO-8859-1", "QamPerformanceClient" => "UTF-8", "QAMTrakFlashClient" => "UTF-8", "SAFlashClient" => "UTF-8"}
+  #regex file pattern for the default translation
+  DEFAULT_TRANSLATION = {"ActernaDCS" => /ApplicationResources.properties/, "QamPerformanceClient" => /en_US/, "QAMTrakFlashClient" => /en_US/, "SAFlashClient" => /en_US/}
   
   #Different languages for translations. These language strings are expected to be contained in the filepath.
   LOCALES = ["en_US", "de_DE", "es_ES", "ja_JP", "pt_BR", "zh_CN"]

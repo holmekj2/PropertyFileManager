@@ -27,3 +27,6 @@ For any properties that you wish to ignore, add them to the property_ignore.rb P
 These scripts should be used with Ruby 1.9.1+ due to the fact that they take into account Ruby 1.9 hashes are sorted based on insertion order. If you want to use it on 1.8 you will find when patching properties
 the order of the properties are not going to be the same. This makes it very hard to do a before/after compare using a diff tool. You can fix it to work with 1.8 but you'll need to keep the property hash sorted in
 PropertyFile.getProperties. 
+
+Gems
+The spreadsheet gem is required to write/read Excel format. The gem is included in this package and can be installed via 'gem install spreadsheet-0.6.5.9.gem'

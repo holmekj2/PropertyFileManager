@@ -43,3 +43,4 @@ comparator = PropertyFileComparator.new
 comparator.compare_all(property_files.property_files_by_category.values)
 PropertyFileCompareWriter.output_language_comparison_files(property_files, output_dir)
 PropertyFileCompareWriter.output_csv_translation_files(property_files, output_dir)
+PropertyFileCompareWriter.output_excel_translation_files(property_files, output_dir)

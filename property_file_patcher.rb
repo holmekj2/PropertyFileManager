@@ -35,7 +35,7 @@ base_dir = ARGV[0]
 patch_file = ARGV[1]
 
 #Read the input patch file. We'll get the language and a set of instances for all the property sets (one for each category in the patch file)
-language, property_sets = PropertyFileCompareWriter.read_csv_translation_files(patch_file)
+language, property_sets = PropertyFileCompareWriter.read_excel_translation_files(patch_file)
 if property_sets.empty?
   puts "No property founds in #{patch_file}"
   exit

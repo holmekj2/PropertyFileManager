@@ -22,6 +22,8 @@
 #++require_relative 'property_files'
 
 require_relative 'property_file'
+require_relative 'property_file_attributes'
+
 
 #Class to sort PropertyFile instances based on PropertyFileAttributes::PROPERTY_FILE_CATEGORY
 class PropertyFileCategory
@@ -33,15 +35,14 @@ class PropertyFileCategory
     @translations = []
   end
   
-  #Set the nominal language; the language to be used for comparison against translations (i.e. US) 
-  #nominal is an instance of PropertyFile
-  def set_nominal(nominal)
-    @nominal = nominal
-  end
-  
   #Add a PropertyFile instance of a translation file
-  def add_translation(translation)
-    @translations.push(translation)
+  def add_property_file(property_file)
+    #Determine if this is the default or translation file
+    if property_file.filename =~ PropertyFileAttributes::DEFAULT_TRANSLATION[@category]
+      @nominal = property_file
+    else
+      translations.push(property_file)
+    end
   end
 end
 
@@ -112,11 +113,7 @@ class PropertyFiles
         @property_files_by_category[p.category] = PropertyFileCategory.new(p.category)
       end
       #Add the property file to the category based on whether it is in English (nominal) or a translation
-      if p.language == PropertyFileAttributes::LOCALES[0]
-        @property_files_by_category[p.category].set_nominal(p)
-      else
-        @property_files_by_category[p.category].add_translation(p)    
-      end
+      @property_files_by_category[p.category].add_property_file(p)    
     end
   end
   
@@ -130,7 +127,8 @@ class PropertyFiles
     @property_filenames.each do |p|
       begin
         @property_files.push(PropertyFile.new(p))
-      rescue
+      #rescue
+      #  puts "scan exception"
       end
     end
   end
