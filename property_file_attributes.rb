@@ -24,6 +24,9 @@
 module PropertyFileAttributes
   #Categories represent the different property files. These categories strings are expected to be contained in the filepath.
   PROPERTY_FILE_CATEGORIES = ["ActernaDCS", "QamPerformanceClient", "QAMTrakFlashClient", "SAFlashClient"]
+  #Encoding types for the various property file categories
+  CATEGORY_ENCODINGS = {"ActernaDCS" => "ISO-8859-1", "QamPerformanceClient" => "UTF-8", "QAMTrakFlashClient" => "UTF-8", "SAFlashClient" => "UTF-8"}
+  
   #Different languages for translations. These language strings are expected to be contained in the filepath.
   LOCALES = ["en_US", "de_DE", "es_ES", "ja_JP", "pt_BR", "zh_CN"]
   #Pattern for the property file search
@@ -33,6 +36,17 @@ module PropertyFileAttributes
 
   #Convert the break space that is used in some languages to a regular space
   def PropertyFileAttributes.remove_break_space(s)
-    s.gsub("\u00A0", " ")          
+    if s.encoding.name == "UTF-8"
+      #First try UTF-8
+      s = s.gsub("\u00A0", " ")          
+    elsif s.encoding.name == "ISO-8859-1"
+      #Then try latin1
+      s = s.gsub("\lA0", " ")              
+    end
+    s
   end
+  
+  def PropertyFileAttributes.convert_to_utf8(s)
+    s = s.encode("UTF-8")
+  end  
 end

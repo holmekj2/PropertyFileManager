@@ -23,6 +23,7 @@
 
 require 'csv'
 require_relative 'property_file'
+require_relative 'property_file_comparator'
 
 module PropertyFileCompareWriter
   CSV_COLUMN_HEADER = 'Property,English Text,Translated Text'
@@ -52,6 +53,8 @@ module PropertyFileCompareWriter
 
     property_files.get_properties_organized_by_language.each do |k, v|
       File.open(output_dir + k + "_translation_errors.txt", "w:UTF-8") do |f|  
+        #Insert byte order marker to indicate UTF-8
+        f.puts("\uFEFF")
         v.each do |property_file|
           #If the PropertyFile instance has errors write them to the file and write each error to the file
           if !property_file.errors.nil?
@@ -86,6 +89,8 @@ module PropertyFileCompareWriter
     
     property_files.get_properties_organized_by_language.each do |k, v|
       File.open(csv_dir + k + "_translation_errors.csv", "w:UTF-8") do |f|  
+        #Insert byte order marker to indicate UTF-8
+        f.puts("\uFEFF")
         f.puts(CSV_LANGUAGE_HEADER + k)
         f.puts(CSV_COLUMN_HEADER)
         #v is an array of PropertyFiles based on language         
@@ -94,7 +99,10 @@ module PropertyFileCompareWriter
             f.puts("Category=#{property_file.category}")
             #Write errors (missing translations) to the csv file
             property_file.errors.each do |kk,vv|
-              f.puts("\"#{kk}\",\"#{vv[1]}\"")
+              #Don't include unknown properties since we don't want these translated              
+              if vv[0] != PropertyFileComparator::ERRORS[:UNKNOWN_PROPERTY]
+                f.puts("\"#{kk}\",\"#{vv[1]}\"")
+              end
             end
           end
         end
