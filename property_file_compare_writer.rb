@@ -31,8 +31,6 @@ module PropertyFileCompareWriter
   CSV_LANGUAGE_HEADER = 'Language='
   CSV_CATEGORY_HEADER = 'Category='  
   EXCEL_COLUMN_HEADER = ['Property', 'English Text' , 'Translated Text']
-  EXCEL_LANGUAGE_HEADER = 'Language='
-  EXCEL_CATEGORY_HEADER = 'Category='  
   
   #Outputs number of translation errors for each property file
   def PropertyFileCompareWriter.output_category_comparison(property_files)

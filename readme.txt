@@ -28,5 +28,9 @@ These scripts should be used with Ruby 1.9.1+ due to the fact that they take int
 the order of the properties are not going to be the same. This makes it very hard to do a before/after compare using a diff tool. You can fix it to work with 1.8 but you'll need to keep the property hash sorted in
 PropertyFile.getProperties. 
 
+Ruby Installation
+For Windows use this site for an easy installation. http://rubyinstaller.org/
+On Linux make sure you have 1.9.x.
+
 Gems
 The spreadsheet gem is required to write/read Excel format. The gem is included in this package and can be installed via 'gem install spreadsheet-0.6.5.9.gem'
