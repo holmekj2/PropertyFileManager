@@ -10,9 +10,9 @@ created per language. The csv file is broken down into categories which map to t
 property_file_patcher.rb script. The inputs to this are the base directory of the Webview source (this is where the translations will be applied) 
 and the translation csv file. We can verify the patch by running the checker again. 
 
-ruby property_file_checker.rb "C:/Users/hol48987/Documents/home/hol48987_D6KWQM1/PathTrak/SystemSoftware/WebView/WebView3.0/" 
-ruby property_file_patcher.rb "C:/Users/hol48987/Documents/home/hol48987_D6KWQM1/PathTrak/SystemSoftware/WebView/WebView3.0/" "C:\Users\hol48987\Documents\workspace\ruby\PropertyFileStatus\compare\csv\BR_translation_errors.csv"
-ruby property_file_checker.rb "C:/Users/hol48987/Documents/home/hol48987_D6KWQM1/PathTrak/SystemSoftware/WebView/WebView3.0/" 
+ruby property_file_checker.rb "C:/Users/hol48987/Documents/home/hol48987_D6KWQM1/PathTrak/SystemSoftware/WebView/main/" 
+ruby property_file_patcher.rb "C:/Users/hol48987/Documents/home/hol48987_D6KWQM1/PathTrak/SystemSoftware/WebView/main/" "C:\Users\hol48987\Documents\workspace\ruby\PropertyFileStatus\compare\csv\BR_translation_errors.csv"
+ruby property_file_checker.rb "C:/Users/hol48987/Documents/home/hol48987_D6KWQM1/PathTrak/SystemSoftware/WebView/main/" 
 
 Development notes
 The PropertyFiles class is used to search the base directory for all property files. It uses the PropertyFileAttributes::PROPERTY_FILE_PATTERN pattern as

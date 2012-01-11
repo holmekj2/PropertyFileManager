@@ -40,7 +40,19 @@ PROPERTIES_TO_IGNORE = {
 "unit.mhz",
 "unit.msps",
 "report.axisLabel.dbuv",
-"ucdscan.table.header.hcu"
+"ucdscan.table.header.hcu",
+
+"error.qfv.session_invalidated",
+"error.qfv.bad_request_xml",
+"error.qfv.not_valid_client",
+"error.qfv.node_not_found",
+"error.qfv.hcu_connection_failed",
+"error.qfv.hcu_connection_unavailable",
+"error.qfv.mactrak_license_disabled",
+"error.qfv.hcu_communication_error",
+"error.qfv.channel_not_found",
+"error.qfv.channel_configuration_mismatch",
+"error.qfv.hcu_connection_terminated"
 ],
 
 "QamPerformanceClient" => [
