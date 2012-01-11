@@ -123,33 +123,29 @@ module PropertyFileCompareWriter
     end
     Spreadsheet.client_encoding = 'UTF-8'    
     property_files.get_properties_organized_by_language.each do |k, v|
+      write_file = false
       book = Spreadsheet::Workbook.new
-      sheet1 = book.create_worksheet
-      sheet1.insert_row(sheet1.row_count)
-      last_row = sheet1.last_row 
-      last_row.push(EXCEL_LANGUAGE_HEADER + k)
-      sheet1.insert_row(sheet1.row_count)
-      last_row = sheet1.last_row 
-      last_row.concat(EXCEL_COLUMN_HEADER)
-
       #v is an array of PropertyFiles based on language         
       v.each do |property_file|
         if !property_file.errors.nil?
-          sheet1.insert_row(sheet1.row_count)
-          last_row = sheet1.last_row 
-          last_row.push("Category=#{property_file.category}")
+          #We only want to write an output file if there are any errors found
+          write_file = true
+          sheet = book.create_worksheet(:name => property_file.category)
+          sheet.insert_row(sheet.row_count)
+          last_row = sheet.last_row 
+          last_row.concat(EXCEL_COLUMN_HEADER)        
           #Write errors (missing translations) to the csv file
           property_file.errors.each do |kk,vv|
             #Don't include unknown properties since we don't want these translated              
             if vv[0] != PropertyFileComparator::ERRORS[:UNKNOWN_PROPERTY]
-              sheet1.insert_row(sheet1.row_count)
-              last_row = sheet1.last_row 
+              sheet.insert_row(sheet.row_count)
+              last_row = sheet.last_row 
               last_row.concat([kk, vv[1]])
             end
           end
         end
       end
-      book.write(excel_dir + k + "_translation_errors.xls")
+      book.write(excel_dir + k + "_translation_errors.xls") if write_file
     end
   end
   
@@ -203,51 +199,43 @@ module PropertyFileCompareWriter
   #an array of PropertySets which is returned along with the language string
   #return language (string PropertyFileAttributes::Languages), property_sets (array of PropertySets, an entry for each category)
   def PropertyFileCompareWriter.read_excel_translation_files(filename)
-    s = nil
-    book = Spreadsheet.open(filename)
-    sheet1 = book.worksheet(0)
-    languague_re = Regexp.new(EXCEL_LANGUAGE_HEADER + '\s?(.*)')
-    category_re = Regexp.new(EXCEL_CATEGORY_HEADER + '\s?(.*)')
-    header_re = Regexp.new(EXCEL_COLUMN_HEADER[0])
-    #Do a regex match to find properties ensuring the x.y format
-    property_re = Regexp.new('.*\..*')    
+    #Find language based on filename
     language = nil
-    category = nil
-    property_sets = []
-    property_set = nil
-    #Find language which should be the first thing in the sheet
-    sheet1.each do |row|
-      col0 = PropertyFileAttributes.remove_break_space(row[0])
-      #Cheack for property      
-      if (m = property_re.match(col0))
-        #Verify a translation exists before setting it to the property set
-        if row.size >= 3 and !row[2].nil? and row[2] != "" and row[2] != row[1]
-          property = col0
-          translation = PropertyFileAttributes.remove_break_space(row[2])
-          property_set.set_property(property, translation)
-        end
-      #Check for language
-      elsif (m = languague_re.match(col0))
-        language = m[1]
-        if !PropertyFileAttributes::LOCALES.include?(language)
-          raise ArgumentError, "Unknown language: #{language}" 
-        end
-      #Check for category
-      elsif (m = category_re.match(col0))
-        category = m[1]
-        if !PropertyFileAttributes::PROPERTY_FILE_CATEGORIES.include?(category)
-          raise ArgumentError, "Unknown category: #{category}" 
-        end
-        #When we find a category, first save off the previous PropertySet if it exists and then create a new PropertySet
-        if !property_set.nil?
-          property_sets.push(property_set)          
-        end
-        property_set = PropertySet.new(category, language)
+    #Find the language based on the path
+    PropertyFileAttributes::LOCALES.each do |l|
+      if filename.index(l)
+        language = l
       end
     end
-    #We need to save off the last property set before we exit since category is the trigger for other ones. 
-    if !property_set.nil?
-      property_sets.push(property_set)          
+    #If the language is not indicated assume it is English
+    if language == nil
+      raise ArgumentError, "Unknown language for #{filename}. Filename must include locale string."
+    end
+    property_re = Regexp.new('.*\..*')        
+    book = Spreadsheet.open(filename)    
+    property_sets = []
+    #Now go thru each sheet
+    book.worksheets.each do |sheet|
+      #Find category
+      category = sheet.name
+      if !PropertyFileAttributes::PROPERTY_FILE_CATEGORIES.include?(category)
+        raise ArgumentError, "Unknown category(#{category} for #{filename}"
+      end
+      property_set = PropertySet.new(category, language)
+      sheet.each do |row|
+        col0 = PropertyFileAttributes.remove_break_space(row[0])
+        #Cheack for property      
+        if (m = property_re.match(col0))
+          #Verify a translation exists before setting it to the property set
+          if row.size >= 3 and !row[2].nil? and row[2] != "" and row[2] != row[1]
+            property = col0
+            translation = PropertyFileAttributes.remove_break_space(row[2])
+            property_set.set_property(property, translation)
+          end
+        end
+      end
+      #Put this property set in our array of all sets
+      property_sets.push(property_set)
     end
     
     return language, property_sets
