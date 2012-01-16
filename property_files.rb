@@ -127,8 +127,7 @@ class PropertyFiles
     @property_filenames.each do |p|
       begin
         @property_files.push(PropertyFile.new(p))
-      #rescue
-      #  puts "scan exception"
+      rescue
       end
     end
   end
