@@ -121,6 +121,7 @@ class PropertyFiles
   #Does recursive file search started at base_directory and creates array of PropertyFile instances
   #filename scanning is defined in PropertyFileAttributes
   def scan_fs_for_property_files(base_directory)
+    base_directory = base_directory.gsub("\\", '/')
     property_file_search_pattern = File.join("#{base_directory}/**", PropertyFileAttributes::PROPERTY_FILE_PATTERN)  
     @property_filenames = Dir.glob(property_file_search_pattern)
     @property_files = []
