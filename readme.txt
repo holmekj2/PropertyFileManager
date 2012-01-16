@@ -45,3 +45,13 @@ On Linux make sure you have 1.9.x.
 The spreadsheet gem is required to write/read Excel format. The gem is included in this package and can be installed via 'gem install spreadsheet-0.6.5.9.gem'
 
 After that just run the scripts as described in the usage section. 
+
+Procedure
+---------
+* Check out latest source from Perforce
+* Run property_file_checker.
+* Send output files (xls) to translators (in compare directory below working directory) 
+* Run property_file_parser on files received from translator
+* Diff property files and verify patches
+* Check property files into Perforce
+
